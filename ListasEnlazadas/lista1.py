@@ -56,11 +56,47 @@ def contar(cabeza):
         actual = actual["siguiente"]
     return total
 
+def atender(cabeza):
+    if cabeza is None:
+        return None, None
+
+    nombre = cabeza["dato"]
+    cabeza = cabeza["siguiente"]
+    return cabeza, nombre
+
+def insertar_despues(cabeza, referente, nombre):
+    actual = cabeza
+
+    while actual is not None:
+        if actual["dato"] == referente:
+            nuevo = crear_nodo(nombre)
+            nuevo["siguiente"] = actual["siguiente"]
+            actual["siguiente"] = nuevo
+            return cabeza, True
+
+        actual = actual["siguiente"]
+
+    return cabeza, False
+
+def invertir(cabeza):
+    anterior = None
+    actual = cabeza
+
+    while actual is not None:
+        siguiente = actual["siguiente"]
+        actual["siguiente"] = anterior
+        anterior = actual
+        actual = siguiente
+
+    return anterior
+
 def menu():
     cabeza = None
     while True:
         print("\n1. Agregar turno  2. Mostrar  3. Buscar")
-        print("4. Eliminar turno  5. Contar  0. Salir")
+        print("4. Eliminar turno  5. Contar  6. Atender turno")
+        print("7. Insertar después  8. Invertir lista  0. Salir")
+
         opcion = input("Opción: ").strip()
 
         if opcion == "0":
@@ -93,9 +129,35 @@ def menu():
         elif opcion == "5":
             print("Total:", contar(cabeza))
 
+        elif opcion == "6":
+            cabeza, nombre = atender(cabeza)
+            if nombre is None:
+                print("No hay turnos pendientes")
+            else:
+                print("Turno atendido:", nombre)
+
+        elif opcion == "7":
+            referente = input("Insertar después de: ").strip()
+            nombre = input("Nombre nuevo: ").strip()
+
+            if not referente or not nombre:
+                print("Escriba los nombres.")
+                continue
+
+            cabeza, insertado = insertar_despues(cabeza, referente, nombre)
+
+            if insertado:
+                print("Turno insertado")
+            else:
+                print("No se encontró a", referente)
+
+        elif opcion == "8":
+            cabeza = invertir(cabeza)
+            print("Lista invertida")
+            mostrar(cabeza)
+
         else:
             print("Opción inválida")
-
 
 if __name__ == "__main__":
     menu()
